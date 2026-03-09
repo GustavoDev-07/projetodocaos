@@ -1,0 +1,4 @@
+CREATE USER 'bibliotecarios'@'%' IDENTIFIED BY '937651';
+GRANT ALL PRIVILEGES ON livraria.* TO 'bibliotecarios'@'%' WITH GRANT OPTION;
+FLUSH PRIVILEGES;
+DROP TABLE livros;
