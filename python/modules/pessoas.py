@@ -1,4 +1,4 @@
-from --- import ---
+from modules.mysql import MySQL
 
 class Usuario:
     def __init__(self, nome, email, idade, senha):

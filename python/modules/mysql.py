@@ -1,7 +1,7 @@
 import pymysql
 
 class MySQL:
-    def __init__(self, host='localhost', user='bibliotecarios', password='937651', database='livraria'):
+    def __init__(self, host='localhost', user='root', password='', database='livraria'):
         self.host = host
         self.user = user
         self.password = password
