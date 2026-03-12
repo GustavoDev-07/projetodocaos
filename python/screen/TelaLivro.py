@@ -262,10 +262,7 @@ class TelaLivro(QWidget):
     # ==========================
 
     def abrir_leitura(self):
-
         from screen.LeitorLivro import LeitorLivro
-
-        tela = LeitorLivro(self.app, self.livro_id)
-
-        self.app.add_page("leitor", tela)
-        self.app.go_to("leitor")
+        self.leitor = LeitorLivro(self.app, id)
+        self.leitor.show()
+        self.close()
