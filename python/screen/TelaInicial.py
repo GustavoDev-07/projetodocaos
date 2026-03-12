@@ -23,11 +23,7 @@ class TelaInicial(QWidget):
 
         self.layout_principal = QVBoxLayout(self)
 
-        # Botão de login no topo
-        self.btn_login = QPushButton("Login")
-        self.btn_login.setFixedWidth(100)
-        self.btn_login.clicked.connect(self.ir_para_login)
-        self.layout_principal.addWidget(self.btn_login, alignment=Qt.AlignRight)
+
 
         # Área de scroll para os cards
         self.scroll_area = QScrollArea()
@@ -108,10 +104,6 @@ class TelaInicial(QWidget):
         self.TelaLivro.show()
         self.close()
 
-    def ir_para_login(self):
-        self.TelaLogin = TelaLogin(self.app)
-        self.TelaLogin.show()
-        self.close()
 
 
 if __name__ == "__main__":

@@ -124,7 +124,7 @@ class TelaLivro(QWidget):
         self.sinopse.setPlaceholderText("Sinopse do livro")
 
         # BOTÃO
-        self.botao_ler = QPushButton("Ler Livro")
+        self.botao_ler = QPushButton("Voltar")
         self.botao_ler.setFixedHeight(45)
         self.botao_ler.clicked.connect(self.abrir_leitura)
 
@@ -228,7 +228,7 @@ class TelaLivro(QWidget):
 
     # ABRIR LEITOR
     def abrir_leitura(self):
-        from screen.LeitorLivro import LeitorLivro
-        self.leitor = LeitorLivro(self.app, self.id)
+        from screen.TelaInicial import TelaInicial
+        self.leitor = TelaInicial(self.app)
         self.leitor.show()
         self.close()
