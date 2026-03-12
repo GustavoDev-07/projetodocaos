@@ -13,11 +13,11 @@ import sys
 from screen.TelaLivro import TelaLivro
 from screen.TelaLogin import TelaLogin
 
+
 class TelaInicial(QWidget):
     def __init__(self, app):
-        
         super().__init__()
-        self.app = app 
+        self.app = app
         self.setWindowTitle("Livraria")
         self.resize(900, 600)
 
@@ -48,16 +48,22 @@ class TelaInicial(QWidget):
             database="livraria"
         )
 
+    def criar_evento_card(self, card, id):
+        """Cria o evento de clique do card garantindo que o ID correto seja passado"""
+        def evento(event):
+            self.ir_para_livro(id)
+        card.mousePressEvent = evento
+
     def carregar_livros(self):
         conexao = self.conectar_banco()
         cursor = conexao.cursor(dictionary=True)
-        # Seleciona o id para passar para TelaLivro
+        # Seleciona os dados necessários para os cards
         cursor.execute("SELECT id, livros, autor, ano, sinopse FROM livros")
         livros = cursor.fetchall()
         cursor.close()
         conexao.close()
 
-        # Criar cards
+        # Criar cards no grid
         row = 0
         col = 0
         for livro in livros:
@@ -69,7 +75,7 @@ class TelaInicial(QWidget):
             card.setFixedSize(250, 180)
             card_layout = QVBoxLayout(card)
 
-            # Título
+            # Título do livro
             titulo = QLabel(livro["livros"])
             titulo.setFont(QFont("Arial", 12, QFont.Bold))
             card_layout.addWidget(titulo)
@@ -87,8 +93,8 @@ class TelaInicial(QWidget):
             sinopse.setWordWrap(True)
             card_layout.addWidget(sinopse)
 
-            # Clique no card: passar apenas o ID do livro
-            card.mousePressEvent = lambda event, id=livro["id"]: self.ir_para_livro(id)
+            # --- Passa o ID correto usando função auxiliar ---
+            self.criar_evento_card(card, livro["id"])
 
             self.grid_layout.addWidget(card, row, col)
             col += 1
@@ -97,7 +103,7 @@ class TelaInicial(QWidget):
                 row += 1
 
     def ir_para_livro(self, id):
-        # Passa apenas o ID para TelaLivro
+        """Abre a TelaLivro passando o ID do livro clicado"""
         self.TelaLivro = TelaLivro(self.app, id)
         self.TelaLivro.show()
         self.close()
