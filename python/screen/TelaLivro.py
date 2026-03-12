@@ -5,11 +5,119 @@ from PySide6.QtWidgets import (
     QLabel,
     QPushButton,
     QTextEdit,
-    QGraphicsBlurEffect
+    QGraphicsBlurEffect,
+    QMessageBox,
+    QLineEdit
 )
 from PySide6.QtGui import QPixmap, QFont
 from PySide6.QtCore import Qt
 from modules.mysql import MySQL
+
+
+class TelaEditarLivro(QWidget):
+
+    def __init__(self, parent, id):
+        super().__init__()
+
+        self.parent = parent
+        self.id = id
+        self.mysql = MySQL()
+
+        self.setWindowTitle("Editar Livro")
+        self.resize(400, 400)
+
+        layout = QVBoxLayout(self)
+
+        self.nome = QLineEdit()
+        self.nome.setPlaceholderText("Nome do Livro")
+
+        self.autor = QLineEdit()
+        self.autor.setPlaceholderText("Autor")
+
+        self.ano = QLineEdit()
+        self.ano.setPlaceholderText("Ano")
+
+        self.genero = QLineEdit()
+        self.genero.setPlaceholderText("Gênero")
+
+        self.sinopse = QTextEdit()
+        self.sinopse.setPlaceholderText("Sinopse")
+
+        self.botao_salvar = QPushButton("Salvar Alterações")
+        self.botao_salvar.clicked.connect(self.salvar)
+
+        layout.addWidget(self.nome)
+        layout.addWidget(self.autor)
+        layout.addWidget(self.ano)
+        layout.addWidget(self.genero)
+        layout.addWidget(self.sinopse)
+        layout.addWidget(self.botao_salvar)
+
+        self.carregar_dados()
+
+    def carregar_dados(self):
+
+        query = """
+        SELECT livros, autor, ano, genero, sinopse
+        FROM livros
+        WHERE id = %s
+        """
+
+        try:
+
+            self.mysql.connect()
+            resultado = self.mysql.execute_query(query, (self.id,))
+            self.mysql.disconnect()
+
+            if not resultado:
+                return
+
+            livro = resultado[0]
+
+            self.nome.setText(livro.get("livros", ""))
+            self.autor.setText(livro.get("autor", ""))
+            self.ano.setText(str(livro.get("ano", "")))
+            self.genero.setText(livro.get("genero", ""))
+            self.sinopse.setText(livro.get("sinopse", ""))
+
+        except Exception as erro:
+            print("Erro ao carregar dados:", erro)
+
+    def salvar(self):
+
+        query = """
+        UPDATE livros
+        SET
+        livros = %s,
+        autor = %s,
+        ano = %s,
+        genero = %s,
+        sinopse = %s
+        WHERE id = %s
+        """
+
+        valores = (
+            self.nome.text(),
+            self.autor.text(),
+            self.ano.text(),
+            self.genero.text(),
+            self.sinopse.toPlainText(),
+            self.id
+        )
+
+        try:
+
+            self.mysql.connect()
+            self.mysql.execute_query(query, valores)
+            self.mysql.disconnect()
+
+            QMessageBox.information(self, "Sucesso", "Livro atualizado!")
+
+            self.parent.carregar_livro()
+            self.close()
+
+        except Exception as erro:
+            print("Erro ao atualizar:", erro)
 
 
 class TelaLivro(QWidget):
@@ -24,21 +132,18 @@ class TelaLivro(QWidget):
         self.setWindowTitle("Informações do Livro")
         self.resize(700, 500)
 
-        # ==========================
-        # BACKGROUND COM BLUR
-        # ==========================
+        # BACKGROUND
         self.background = QLabel(self)
         self.background.setScaledContents(True)
         self.bg_pixmap = QPixmap("fundo.jpg/AlexandriaFundo.jpg")
         self.background.setPixmap(self.bg_pixmap)
+
         blur = QGraphicsBlurEffect()
         blur.setBlurRadius(40)
         self.background.setGraphicsEffect(blur)
         self.background.lower()
 
-        # ==========================
-        # ESTILO GERAL
-        # ==========================
+        # ESTILO
         self.setStyleSheet("""
         QWidget{
             color:white;
@@ -74,24 +179,22 @@ class TelaLivro(QWidget):
         self.layout.setContentsMargins(40, 30, 40, 30)
         self.layout.setSpacing(20)
 
-        # ==========================
-        # ZONA SUPERIOR
-        # ==========================
+        # PARTE SUPERIOR
         top_layout = QHBoxLayout()
         top_layout.setSpacing(30)
 
-        # CAPA
         self.capa = QLabel()
         self.capa.setFixedSize(220, 320)
         self.capa.setAlignment(Qt.AlignCenter)
+
         self.capa.setStyleSheet("""
         background-color:rgba(30,30,30,200);
         border:2px solid #3a3a3a;
         border-radius:6px;
         """)
 
-        # CONTAINER DAS INFORMAÇÕES
         info_container = QWidget()
+
         info_container.setStyleSheet("""
         background-color:rgba(20,20,20,190);
         border:1px solid #3a3a3a;
@@ -121,9 +224,20 @@ class TelaLivro(QWidget):
         # SINOPSE
         self.sinopse = QTextEdit()
         self.sinopse.setReadOnly(True)
-        self.sinopse.setPlaceholderText("Sinopse do livro")
 
-        # BOTÃO
+        # BOTÕES NOVOS
+        botoes_layout = QHBoxLayout()
+
+        self.botao_editar = QPushButton("Editar")
+        self.botao_editar.clicked.connect(self.editar_livro)
+
+        self.botao_excluir = QPushButton("Excluir")
+        self.botao_excluir.clicked.connect(self.excluir_livro)
+
+        botoes_layout.addWidget(self.botao_editar)
+        botoes_layout.addWidget(self.botao_excluir)
+
+        # BOTÃO VOLTAR
         self.botao_ler = QPushButton("Voltar")
         self.botao_ler.setFixedHeight(45)
         self.botao_ler.clicked.connect(self.abrir_leitura)
@@ -131,18 +245,17 @@ class TelaLivro(QWidget):
         # MONTAGEM
         self.layout.addLayout(top_layout)
         self.layout.addWidget(self.sinopse)
+        self.layout.addLayout(botoes_layout)
         self.layout.addWidget(self.botao_ler)
 
-        # CARREGAR DADOS DO BANCO
         self.carregar_livro()
 
-    # AJUSTAR FUNDO
     def resizeEvent(self, event):
         self.background.resize(self.size())
         super().resizeEvent(event)
 
-    # CARREGAR LIVRO DO BANCO
     def carregar_livro(self):
+
         query = """
         SELECT
             livros,
@@ -155,6 +268,7 @@ class TelaLivro(QWidget):
         """
 
         try:
+
             self.mysql.connect()
             resultado = self.mysql.execute_query(query, (self.id,))
             self.mysql.disconnect()
@@ -165,68 +279,50 @@ class TelaLivro(QWidget):
 
             livro = resultado[0]
 
-            # Preenche os campos do container
             self.nome_livro.setText(livro.get("livros", "Livro sem nome"))
             self.autor_livro.setText(f"Autor: {livro.get('autor', 'Desconhecido')}")
             self.idade_livro.setText(f"Ano: {livro.get('ano', 'Não definido')}")
             self.tags_livro.setText(f"Gênero: {livro.get('genero', 'Não definido')}")
             self.sinopse.setText(livro.get("sinopse", "Sinopse não disponível."))
 
-            # Carrega capa se existir
-            # capa = livro.get("capa")
-            # if capa:
-            #     pixmap = QPixmap(capa)
-            #     if not pixmap.isNull():
-            #         self.capa.setPixmap(
-            #             pixmap.scaled(
-            #                 220,
-            #                 320,
-            #                 Qt.KeepAspectRatio,
-            #                 Qt.SmoothTransformation
-            #             )
-            #         )
-
         except Exception as erro:
             print("Erro ao carregar livro:", erro)
-    
-    # def carregar_livro(self):
 
-    #     query = """
-    #     SELECT
-    #         nome,
-    #         conteudo
-    #     FROM livros
-    #     WHERE id = %s
-    #     """
+    # EXCLUIR LIVRO
+    def excluir_livro(self):
 
-    #     try:
+        confirmar = QMessageBox.question(
+            self,
+            "Confirmar",
+            "Deseja realmente excluir este livro?",
+            QMessageBox.Yes | QMessageBox.No
+        )
 
-    #         resultado = self.mysql.select(query, (self.id))
+        if confirmar == QMessageBox.No:
+            return
 
-    #         if not resultado:
-    #             print("Livro não encontrado.")
-    #             return
+        query = "DELETE FROM livros WHERE id = %s"
 
-    #         livro = resultado[0]
+        try:
 
-    #         nome = livro.get("nome")
-    #         conteudo = livro.get("conteudo")
+            self.mysql.connect()
+            self.mysql.execute_query(query, (self.id,))
+            self.mysql.disconnect()
 
-    #         if nome:
-    #             self.nome_livro.setText(f"Lendo: {nome}")
+            QMessageBox.information(self, "Sucesso", "Livro excluído.")
 
-    #         if conteudo:
-    #             self.area_leitura.setText(conteudo)
-    #         else:
-    #             self.area_leitura.setText(
-    #                 "Este livro ainda não possui conteúdo cadastrado."
-    #             )
+            self.abrir_leitura()
 
-    #     except Exception as erro:
+        except Exception as erro:
+            print("Erro ao excluir:", erro)
 
-    #         print("Erro ao carregar conteúdo do livro:", erro)
+    # EDITAR LIVRO
+    def editar_livro(self):
 
-    # ABRIR LEITOR
+        self.tela_editar = TelaEditarLivro(self, self.id)
+        self.tela_editar.show()
+
+    # VOLTAR
     def abrir_leitura(self):
         from screen.TelaInicial import TelaInicial
         self.leitor = TelaInicial(self.app)
