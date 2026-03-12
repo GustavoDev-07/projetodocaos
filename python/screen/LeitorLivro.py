@@ -15,11 +15,11 @@ from modules.mysql import MySQL
 
 class LeitorLivro(QWidget):
 
-    def __init__(self, app, livro_id):
+    def __init__(self, app, id):
         super().__init__()
 
         self.app = app
-        self.livro_id = livro_id
+        self.id = id
         self.mysql = MySQL()
 
         self.setWindowTitle("Leitor de Livro")
@@ -109,8 +109,10 @@ class LeitorLivro(QWidget):
     # ==========================
 
     def voltar_livro(self):
-
-        self.app.go_to("livro")
+        from screen.TelaLivro import TelaLivro  # importa a tela de volta
+        self.tela_livro = TelaLivro(self.app, self.id)  # cria a tela passando o mesmo livro
+        self.tela_livro.show()  # mostra a tela
+        self.close()  # fecha a tela de leitura
 
     # ==========================
     # CARREGAR LIVRO
@@ -128,7 +130,7 @@ class LeitorLivro(QWidget):
 
         try:
 
-            resultado = self.mysql.select(query, (self.livro_id,))
+            resultado = self.mysql.select(query, (self.id))
 
             if not resultado:
                 print("Livro não encontrado.")

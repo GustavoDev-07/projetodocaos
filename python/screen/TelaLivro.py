@@ -16,11 +16,11 @@ from modules.mysql import MySQL
 
 class TelaLivro(QWidget):
 
-    def __init__(self, app, livro_id):
+    def __init__(self, app, id):
         super().__init__()
 
         self.app = app
-        self.livro_id = livro_id
+        self.id = id
         self.mysql = MySQL()
 
         self.setWindowTitle("Informações do Livro")
@@ -262,7 +262,7 @@ class TelaLivro(QWidget):
     # ==========================
 
     def abrir_leitura(self):
-        from screen.LeitorLivro import LeitorLivro
-        self.leitor = LeitorLivro(self.app, id)
-        self.leitor.show()
-        self.close()
+        from screen.LeitorLivro import LeitorLivro  # importa a tela de leitura
+        self.leitor = LeitorLivro(self.app, self.id)  # passa o ID correto do livro
+        self.leitor.show()  # abre a tela de leitura
+        self.close()  # fecha a tela atual
