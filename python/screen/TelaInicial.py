@@ -117,7 +117,7 @@ class TelaNovoLivro(QWidget):
 
     def conectar_banco(self):
         return mysql.connector.connect(
-            host="localhost",
+            host="127.0.0.1",
             user="root",
             password="",
             database="livraria"
@@ -240,7 +240,7 @@ class TelaInicial(QWidget):
     def conectar_banco(self):
 
         return mysql.connector.connect(
-            host="localhost",
+            host="127.0.0.1",
             user="root",
             password="",
             database="livraria"
