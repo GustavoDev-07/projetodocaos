@@ -14,11 +14,6 @@ from PySide6.QtGui import QFont
 from PySide6.QtCore import Qt
 from modules.mysql import MySQL
 
-
-# =========================
-# TELA EDITAR LIVRO
-# =========================
-
 class TelaEditarLivro(QWidget):
 
     def __init__(self, parent, id):
@@ -184,11 +179,6 @@ class TelaEditarLivro(QWidget):
         except Exception as erro:
             print("Erro ao atualizar:", erro)
 
-
-# =========================
-# TELA DO LIVRO
-# =========================
-
 class TelaLivro(QWidget):
 
     def __init__(self, app, id):
@@ -245,7 +235,6 @@ class TelaLivro(QWidget):
         self.layout.setSpacing(20)
         self.layout.setContentsMargins(40,30,40,30)
 
-        # AREA SUPERIOR
         top_layout = QHBoxLayout()
 
         self.capa = QFrame()
@@ -277,11 +266,9 @@ class TelaLivro(QWidget):
         top_layout.addWidget(self.capa)
         top_layout.addWidget(info_container)
 
-        # SINOPSE
         self.sinopse = QTextEdit()
         self.sinopse.setReadOnly(True)
 
-        # BOTÕES
         botoes_layout = QHBoxLayout()
 
         self.botao_editar = QPushButton("Editar")
@@ -293,12 +280,10 @@ class TelaLivro(QWidget):
         botoes_layout.addWidget(self.botao_editar)
         botoes_layout.addWidget(self.botao_excluir)
 
-        # VOLTAR
         self.botao_voltar = QPushButton("Voltar")
         self.botao_voltar.setFixedHeight(45)
         self.botao_voltar.clicked.connect(self.abrir_leitura)
 
-        # MONTAGEM
         self.layout.addLayout(top_layout)
         self.layout.addWidget(self.sinopse)
         self.layout.addLayout(botoes_layout)

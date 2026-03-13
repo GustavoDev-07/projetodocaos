@@ -1,5 +1,3 @@
-# TelaInicial.py
-
 from PySide6.QtWidgets import (
     QApplication, QWidget, QVBoxLayout, QPushButton, QLabel,
     QScrollArea, QFrame, QGridLayout, QLineEdit, QTextEdit,
@@ -13,10 +11,6 @@ import sys
 from screen.TelaLivro import TelaLivro
 from screen.TelaLogin import TelaLogin
 
-
-# ===============================
-# TELA PARA CRIAR NOVO LIVRO
-# ===============================
 class TelaNovoLivro(QWidget):
 
     def __init__(self, parent):
@@ -27,7 +21,6 @@ class TelaNovoLivro(QWidget):
         self.setWindowTitle("Cadastrar Livro")
         self.resize(500, 520)
 
-        # ESTILO VISUAL IGUAL AO DA TELA INICIAL
         self.setStyleSheet("""
 
         QWidget{
@@ -76,8 +69,6 @@ class TelaNovoLivro(QWidget):
 
         layout_principal = QVBoxLayout(self)
         layout_principal.setAlignment(Qt.AlignCenter)
-
-        # CARD CENTRAL
         card = QFrame()
         card_layout = QVBoxLayout(card)
         card_layout.setSpacing(12)
@@ -163,10 +154,6 @@ class TelaNovoLivro(QWidget):
 
             QMessageBox.critical(self, "Erro", f"Erro ao salvar livro:\n{erro}")
 
-
-# ===============================
-# TELA INICIAL
-# ===============================
 class TelaInicial(QWidget):
 
     CARD_WIDTH = 220
@@ -178,8 +165,6 @@ class TelaInicial(QWidget):
 
         self.setWindowTitle("Livraria")
         self.resize(1100, 700)
-
-        # ESTILO GLOBAL
         self.setStyleSheet("""
 
         QWidget{
@@ -214,14 +199,12 @@ class TelaInicial(QWidget):
 
         self.layout_principal = QVBoxLayout(self)
 
-        # BOTÃO CRIAR NOVO
         self.botao_criar = QPushButton("Criar Novo Livro")
         self.botao_criar.setFixedHeight(40)
         self.botao_criar.clicked.connect(self.abrir_tela_novo)
 
         self.layout_principal.addWidget(self.botao_criar)
 
-        # SCROLL
         self.scroll_area = QScrollArea()
         self.scroll_area.setWidgetResizable(True)
 

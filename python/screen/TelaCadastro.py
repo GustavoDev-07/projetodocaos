@@ -22,11 +22,6 @@ class TelaCadastro(QWidget):
         self.mysql = MySQL()
 
         self.setWindowTitle("Cadastro")
-
-        # ==========================
-        # ESTILO
-        # ==========================
-
         self.setStyleSheet("""
         QWidget{
             background-color:#121212;
@@ -64,10 +59,6 @@ class TelaCadastro(QWidget):
         }
         """)
 
-        # ==========================
-        # LAYOUT
-        # ==========================
-
         layout = QVBoxLayout(self)
         layout.setAlignment(Qt.AlignCenter)
         layout.setSpacing(15)
@@ -76,20 +67,16 @@ class TelaCadastro(QWidget):
         titulo.setFont(QFont("Segoe UI", 22, QFont.Bold))
         titulo.setAlignment(Qt.AlignCenter)
 
-        # nome
         self.nome = QLineEdit()
         self.nome.setPlaceholderText("Nome")
 
-        # email
         self.email = QLineEdit()
         self.email.setPlaceholderText("Email")
 
-        # senha
         self.senha = QLineEdit()
         self.senha.setPlaceholderText("Senha")
         self.senha.setEchoMode(QLineEdit.Password)
 
-        # botão cadastrar
         botao = QPushButton("Cadastrar")
         botao.clicked.connect(self.cadastrar)
 
@@ -98,8 +85,3 @@ class TelaCadastro(QWidget):
         layout.addWidget(self.email)
         layout.addWidget(self.senha)
         layout.addWidget(botao)
-
-    # ==========================
-    # CADASTRAR USUÁRIO
-    # ==========================
-

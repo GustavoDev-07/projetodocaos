@@ -1,5 +1,3 @@
-# app.py
-
 import sys
 from PySide6.QtWidgets import QApplication
 from screen.TelaInicial import TelaInicial  

@@ -24,10 +24,6 @@ class LeitorLivro(QWidget):
 
         self.setWindowTitle("Leitor de Livro")
 
-        # ==========================
-        # ESTILO
-        # ==========================
-
         self.setStyleSheet("""
         QWidget{
             background-color:#121212;
@@ -57,27 +53,18 @@ class LeitorLivro(QWidget):
         }
         """)
 
-        # ==========================
-        # LAYOUT PRINCIPAL
-        # ==========================
 
         layout = QVBoxLayout(self)
         layout.setContentsMargins(30, 20, 30, 30)
         layout.setSpacing(20)
 
-        # ==========================
-        # BARRA SUPERIOR
-        # ==========================
-
         top_bar = QHBoxLayout()
         top_bar.setSpacing(15)
 
-        # botão voltar
         self.botao_voltar = QPushButton("← Voltar")
         self.botao_voltar.setFixedHeight(35)
         self.botao_voltar.clicked.connect(self.voltar_livro)
 
-        # nome do livro
         self.nome_livro = QLabel("Carregando livro...")
         self.nome_livro.setFont(QFont("Segoe UI", 18, QFont.Bold))
         self.nome_livro.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
@@ -86,37 +73,20 @@ class LeitorLivro(QWidget):
         top_bar.addWidget(self.nome_livro)
         top_bar.addStretch()
 
-        # ==========================
-        # ÁREA DE LEITURA
-        # ==========================
-
         self.area_leitura = QTextEdit()
         self.area_leitura.setReadOnly(True)
         self.area_leitura.setPlaceholderText("Conteúdo do livro aparecerá aqui...")
 
-        # ==========================
-        # MONTAGEM
-        # ==========================
-
         layout.addLayout(top_bar)
         layout.addWidget(self.area_leitura)
 
-        # carregar conteúdo
         self.carregar_livro()
 
-    # ==========================
-    # VOLTAR PARA TELA DO LIVRO
-    # ==========================
-
     def voltar_livro(self):
-        from screen.TelaLivro import TelaLivro  # importa a tela de volta
-        self.tela_livro = TelaLivro(self.app, self.id)  # cria a tela passando o mesmo livro
-        self.tela_livro.show()  # mostra a tela
-        self.close()  # fecha a tela de leitura
-
-    # ==========================
-    # CARREGAR LIVRO
-    # ==========================
+        from screen.TelaLivro import TelaLivro
+        self.tela_livro = TelaLivro(self.app, self.id)  
+        self.tela_livro.show()  
+        self.close()  
 
     def carregar_livro(self):
 
